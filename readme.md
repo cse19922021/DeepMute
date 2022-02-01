@@ -8,12 +8,12 @@ The first step is to run `gen_cpg.py`. There are two addresses in this script. `
 ## Step 2:
 You need to run `analyze.py` to generate a mutation database in this step. Once you run the script, you will see the mutation database is generated in your root directory as `mutation_database.db`
 
-##Step 3: 
+## Step 3: 
 You need to run `get_tests_list.py` to get all available Tensorflow kernel module test files. Please modify `target_path` in this script to the directory where you have downloaded or cloned TensorFlow source files. 
 
-##Step 4:
+## Step 4:
 In this step, you need to cd to the TensorFlow source directory and configure TensorFlow with its optional parameters. You need to run ./configure.py
 
-##Step 5:
+## Step 5:
 run `mutate.py` to start the main phase of mutation analysis. 
 
