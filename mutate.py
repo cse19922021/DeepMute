@@ -377,49 +377,18 @@ def main():
     #ds_list = random.sample(ds_list, len(ds_list))
     db_obj.delete_null()
 
-    op_rq_alive = 0
-    op_rq_killed = 0
-    op_rq_ok_alive = 0
-    op_rq_ok_killed = 0
-
-    all_op = 0
-    all_op_ok = 0
-
     for item in ds_list:
         # item = ds_list[i]
         # item = list(item)
-        check1 = re.findall(r'\bOP_REQUIRES\b\s*\(([^\)]+)\)', item[3])
-        check2 = re.findall(r'\bOP_REQUIRES_OK\b\s*\(([^\)]+)\)', item[3])
-
-        if check1:
-            all_op += 1
-        if check2:
-            all_op_ok += 1
-        if item[9] == 'alive' and check1:
-            op_rq_alive += 1
-        if item[9] == 'killed' and check1:
-            op_rq_killed += 1
-        if item[9] == 'alive' and check2:
-            op_rq_ok_alive += 1
-        if item[9] == 'killed' and check2:
-            op_rq_ok_killed += 1
-    print('OP_REQUIRES ALIVE', op_rq_alive)
-    print('OP_REQUIRES KILLED', op_rq_killed)
-    print('OP_REQUIRES_OK ALIVE', op_rq_ok_alive)
-    print('OP_REQUIRES_OK KILLED', op_rq_ok_killed)
-
-    print('ALL OP_REQUIRES', all_op)
-    print('ALL OP_REQUIRES_OK', all_op_ok)
-            
-            # if os.path.isfile(item[7]):
-            #     data_dict = read_code_file(item[7])
-            #     print('I am mutating {}'.format(item[7]))
-            #     filtered_operators = mpost.determine_operator(item[6])
-            #     start_time = time.monotonic()
-            #     mpost.apply_mutate(filtered_operators, data_dict, item, filtered_operators[0])
-            #     end_time = time.monotonic()
-            #     print('Duration of mutation on this file: {}'.format(end_time - start_time))
-            #     mpost.reset_flag()
+        if os.path.isfile(item[7]):
+            data_dict = read_code_file(item[7])
+            print('I am mutating {}'.format(item[7]))
+            filtered_operators = mpost.determine_operator(item[6])
+            start_time = time.monotonic()
+            mpost.apply_mutate(filtered_operators, data_dict, item, filtered_operators[0])
+            end_time = time.monotonic()
+            print('Duration of mutation on this file: {}'.format(end_time - start_time))
+            mpost.reset_flag()
 
 
 if __name__ == '__main__':
