@@ -15,5 +15,5 @@ You need to run `get_tests_list.py` to get all available Tensorflow kernel modul
 In this step, you need to cd to the TensorFlow source directory and configure TensorFlow with its optional parameters. You need to run ./configure.py
 
 ## Step 5:
-run `mutate.py` to start the main phase of mutation analysis. 
+Run `mutate.py` to start the main phase of mutation analysis. 
 
