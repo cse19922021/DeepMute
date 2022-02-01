@@ -1,24 +1,20 @@
 
 import os
 from util.fileUtil import getListOfFiles, write_list_to_txt2, read_txt, copy_files
-from subprocess import call, run
+import argparse
 
 def main():
-        # the path of project under test. If you want to analyze a different project for potential mutations
+    # the path of project under test. If you want to analyze a different project for potential mutations
     # provide a different address
 
     # the name of the project
     sut = 'tensorflow'
 
-    target_path = '/media/nimashiri/SSD/'+sut+'/tensorflow/core/kernels'
+    # please do not remove 'sut' from the address
+    target_path = '/path/to/'+sut+'/tensorflow/core/kernels'
 
-    source_files_in_one_place = '/media/nimashiri/SSD/'+sut+'_source_files_path'
-
-    # please indicate the location where you want to store all generated cpgs
-    #cpg_dest_path = '/home/nimashiri/'+sut+'_cpg_path'
-
-    # if not os.path.exists(cpg_dest_path):
-    #     os.makedirs(cpg_dest_path)
+    # please do not remove 'sut' from the address
+    source_files_in_one_place = '/path/to/folder/where/we/want/to/extract/'+sut+'all/kernel/files'
 
 
     if not os.path.exists(source_files_in_one_place):
