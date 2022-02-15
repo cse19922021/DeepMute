@@ -13,8 +13,7 @@ import argparse
 import re
 # from func_extract_clang import main
 # from func_extract_clang import source_to_ast
-from util.fileUtil import read_code_file, read_csv, read_txt
-from util.extract_AST import build_tree
+from util.fileUtil import read_code_file, read_txt
 from multiprocessing import Pool
 
 if os.path.isfile('./mutation_database.db'):

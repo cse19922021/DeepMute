@@ -16,10 +16,8 @@ def main():
     # please do not remove 'sut' from the address
     source_files_in_one_place = '/path/to/folder/where/we/want/to/extract/'+sut+'all/kernel/files'
 
-
     if not os.path.exists(source_files_in_one_place):
         os.makedirs(source_files_in_one_place)
-
 
     # we need list of all files from project under test to check for potential mutatioons
     # please note that we only extract C and CC files since this tool solely designed to 
@@ -30,10 +28,8 @@ def main():
         # output the list to disk
         write_list_to_txt2(_files, sut)
         
-    
     # read list of all files from disk
     _files = read_txt(sut)
-
 
     copy_files(_files, source_files_in_one_place)
 

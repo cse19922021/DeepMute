@@ -1,6 +1,6 @@
 
 import os
-from util.fileUtil import write_list_to_txt, write_list_to_txt2, read_txt
+from util.fileUtil import write_list_to_txt2
 
 
 def getListOfFiles(dirName):
@@ -35,7 +35,8 @@ def main():
     # the name of the project
     sut = 'tensorflow'
 
-    target_path = '/media/nimashiri/SSD/'+sut+'/tensorflow/python/kernel_tests'
+    # Please do not change the second part of the address. 
+    target_path = '/path/to/tensorflow/source/files/'+sut+'/tensorflow/python/kernel_tests'
 
     out_file_name = 'tensorflow_kernel_test'
 
