@@ -94,18 +94,23 @@ def read_entire_code_file(file_path):
         content_list = content_file.r
     return content_list
 
-def read_txt(filename):
-    with open(filename+'_files'+'.txt', 'r') as fileReader:
+def read_txt(fname):
+    with open(fname, 'r') as fileReader:
         data = fileReader.read().splitlines()
     return data
 
-def write_list_to_txt2(data, project_name):
-    with open(project_name+"_files"+".txt", "a") as file:
+def write_list_to_txt2(data):
+    with open("projects_files.txt", "a") as file:
+        for row in data:
+            file.write(row+'\n')
+
+def write_list_to_txt3(data):
+    with open("kernel_tests_files.txt", "a") as file:
         for row in data:
             file.write(row+'\n')
 
 def write_list_to_txt(data, project_name):
-    with open(project_name+"_files"+".txt", "a") as file:
+    with open(project_name, "a") as file:
         #for row in data:
         file.write(str(data)+'\n')
 

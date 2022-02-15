@@ -10,11 +10,11 @@ from threading import Thread
 from multiprocessing import Pool
 import pandas as pd
 from datetime import datetime
-import time, random
+import time, random, argparse, sys
 
 all_run = []
 
-valid_tests = 'tensorflow_kernel_test_all_run'
+valid_tests = 'kernel_test_all_valid.txt'
 
 
 if os.path.isfile('./mutation_database.db'):
@@ -180,10 +180,9 @@ def parse_shell(data):
     return False, logging
 
 class MutatePOSTGRE:
-    def __init__(self, project_name, test_files):
+    def __init__(self, test_files):
         self.killed = 0
         self.alive = 0
-        self.project_name = project_name
         self.test_files = test_files
         self.test_files_status = {}
 
@@ -218,7 +217,6 @@ class MutatePOSTGRE:
         run('./scripts/build_pip.sh', shell=True)
         run('./scripts/pip_install_.sh', shell=True)
 
-        out_file_name = 'tensorflow_kernel_test_all_run'
         with Pool(10) as p:
             p.map(process_prerun, self.test_files)
 
@@ -358,20 +356,20 @@ class MutatePOSTGRE:
 
 def main():
 
-    project_name = 'tensorflow_kernel_test'
+    project_name = 'kernel_tests_files.txt'
 
     #pre run test files to excluding failed ones
-    if not os.path.isfile('tensorflow_kernel_test_all_run_files.txt'):
+    if not os.path.isfile('kernel_test_all_valid.txt'):
         _files = read_txt(project_name)
 
-        mpost = MutatePOSTGRE(project_name, _files)
+        mpost = MutatePOSTGRE(_files)
 
         mpost.pre_run_test_files()
 
 
     _files = read_txt(valid_tests)
 
-    mpost = MutatePOSTGRE(project_name, _files)
+    mpost = MutatePOSTGRE(_files)
 
     ds_list = db_obj.filter_table()
     #ds_list = random.sample(ds_list, len(ds_list))
@@ -392,4 +390,9 @@ def main():
 
 
 if __name__ == '__main__':
+    Epilog  = """usage: python mutate.py"""
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+        description='Start mutation analysis on tensorflow core kernel files.', epilog=Epilog)
+
     main()

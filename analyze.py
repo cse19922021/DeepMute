@@ -1,25 +1,38 @@
 import os
 import re
-import json
-import codecs
-import os
-from pathlib import Path
-import itertools
-import csv
+import os, shutil
 from util.DBadaptor import DBHandler
 from subprocess import call
-import subprocess, sys
 import argparse
-import re
-# from func_extract_clang import main
-# from func_extract_clang import source_to_ast
-from util.fileUtil import read_code_file, read_txt
+import re, sys
+from util.fileUtil import read_code_file, read_txt, copy_files, getListOfFiles, write_list_to_txt2
 from multiprocessing import Pool
 
 if os.path.isfile('./mutation_database.db'):
     db_obj = DBHandler(False)
 else:
     db_obj = DBHandler(True)
+
+
+def handle_source_files(target_path):
+
+    source_files_in_one_place = './temp'
+
+    if not os.path.exists(source_files_in_one_place):
+        os.makedirs(source_files_in_one_place)
+
+    if not os.path.isfile('./projects_files.txt'):
+        # get list of all files
+        _files = getListOfFiles(target_path)
+        # output the list to disk
+        write_list_to_txt2(_files)
+        
+    # read list of all files from disk
+    fname = 'projects_files.txt'
+    _files = read_txt(fname)
+
+    copy_files(_files, source_files_in_one_place)
+
 
 class CheckPotential:
     def __init__(self) -> None:
@@ -52,11 +65,6 @@ class CheckPotential:
                 check3 = re.findall(r'\bint64_t\b', self._method[line])
                 check4 = re.findall(r'\bsize_t\b', self._method[line])
                 if check1 or check2 or check3 or check4:
-                    #stmt = []
-                    #end_line = self.rangeCheck(line)
-                    #for sub_line in range(line, end_line+1):
-                    #stmt.append(self._method[line])
-                    #stmt = ''.join(stmt)
                     db_obj.insert_data(self.mutId,line, line, self._method[line], '', os.path.basename(current_file), "numericalPrecision", current_file, '')
 
 
@@ -79,9 +87,6 @@ class CheckPotential:
         with Pool(10) as p:
             p.map(self.tensor_property_checker, (current_file,))
 
-        # with Pool(10) as p:
-        #     p.map(self.tensor_property_checker, (current_file,))
-
 visited = set()        
 
 def regex_parser(str):
@@ -91,8 +96,6 @@ def parse_ast(tree):
     print(tree['code'])
     if tree == None:
         return 1
-    # if regex_parser(tree['code']):
-    #     print(tree['code'])
     if not tree['has_child']:
         return 1
     if tree['id'] not in visited:
@@ -108,44 +111,35 @@ def parse_addr(f):
             else:
                 return False
 
-def main():
-
-    # target_path = args.target_path
+def main(args):
+    handle_source_files(args.target_path)
     _obj = CheckPotential()
 
-    sut = 'tensorflow'
-
-    _files = read_txt(sut)
-    # cpg_dest_path = '/media/nimashiri/SSD/'+sut+'_cpg_path'
+    fname = 'projects_files.txt'
+    _files = read_txt(fname)
     for f in _files:
         fname = os.path.basename(f)
         if re.findall(r'(\bcore\/kernels\b)', f):
-            # cpg_path = os.path.join(cpg_dest_path, fname)
-
-            # edges_path = os.path.join(cpg_path, 'edges.csv')
-            # nodes_path = os.path.join(cpg_path, 'nodes.csv')
-
-            # edges = read_csv(edges_path)
-            # nodes = read_csv(nodes_path)
-
-            # ast = build_tree(edges, nodes)
-
-            #parse_ast(ast[0])
-
-            #call(['./lib/remove.sh', current_file, sub_files])
-            # source_to_ast(current_file, 'result.txt')
             data_dict = read_code_file(f)
             _obj.set(data_dict)
             _obj.apply(f)
-            #call("./remove-clang.sh")
             _obj.reset_flag()
     
 
-
 if __name__ == '__main__':
-    main()
-    # parser = argparse.ArgumentParser(description='Analyze your project for potential mutations')
-    # parser.add_argument('target_path', type=str, help='your target directory')
-    # args = parser.parse_args()
-    # # args = "/home/nimashiri/postgres-REL_13_1/src/"
-    # main(args)
+
+    Epilog  = """usage: python analyze.py --target_path=../tensorflow/tensorflow/core/kernels/"""
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+        description='Analyze tensorflow for potential mutations.', epilog=Epilog)
+
+    parser.add_argument('--target_path' , type=str, help='Please enter the path where you have cloned tensorflow source files.')
+
+    args = parser.parse_args()
+
+    if args.target_path == None:
+        parser.print_help()
+        sys.exit(-1)
+
+    main(args)
+    shutil.rmtree('./temp')
